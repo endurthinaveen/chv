@@ -14,6 +14,43 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final PageController _pageController = PageController(viewportFraction: 0.85);
   int _currentPage = 0;
+  int _selectedCategoryIndex = 0;
+
+  final List<Map<String, dynamic>> _topCategories = [
+    {'label': 'All'},
+    {'label': 'Men'},
+    {'label': 'Women'},
+    {'label': 'Kids'},
+    {'icon': Icons.more_horiz},
+  ];
+
+  final Map<String, List<Map<String, String>>> _subCategories = {
+    'All': [
+      {'label': 'Fashion', 'image': 'assets/images/fashion.png'},
+      {'label': 'Beauty', 'image': 'assets/images/beauty.png'},
+      {'label': 'Home', 'image': 'assets/images/home.png'},
+      {'label': 'Footwear', 'image': 'assets/images/shoes.png'},
+      {'label': 'Accessories', 'image': 'assets/images/bag.png'},
+    ],
+    'Men': [
+      {'label': 'T-Shirts', 'image': 'assets/images/men_tshirt.png'},
+      {'label': 'Jeans', 'image': 'assets/images/jeans.png'},
+      {'label': 'Shoes', 'image': 'assets/images/shoes.png'},
+      {'label': 'Watches', 'image': 'assets/images/watch.png'},
+    ],
+    'Women': [
+      {'label': 'Dresses', 'image': 'assets/images/dress.png'},
+      {'label': 'Kurtas', 'image': 'assets/images/kurtas.png'},
+      {'label': 'Heels', 'image': 'assets/images/redheels.png'},
+      {'label': 'Bags', 'image': 'assets/images/bag.png'},
+    ],
+    'Kids': [
+      {'label': 'Tops', 'image': 'assets/images/top.png'},
+      {'label': 'Shorts', 'image': 'assets/images/shorts.png'},
+      {'label': 'Shoes', 'image': 'assets/images/shoes.png'},
+    ],
+  };
+
   final List<String> _bannerImages = [
     'assets/images/hero.png',
     'assets/images/redheels.png',
@@ -35,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeInOut,
         );
-        _startAutoScroll(); // loop again
+        _startAutoScroll();
       }
     });
   }
@@ -46,38 +83,94 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
+    final selectedKey = _topCategories[_selectedCategoryIndex]['label'] ?? 'All';
+
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text('Discover Fashion', style: TextStyle(color: Colors.white)),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.favorite, color: Colors.redAccent),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const FavoritesScreen()));
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileScreen()));
-              },
-              child: const CircleAvatar(
-                backgroundImage: AssetImage('assets/images/user.png'),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(120),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              color: const Color(0xFFFFF3E0),
+              child: Row(
+                children: const [
+                  Icon(Icons.location_on, size: 18, color: Colors.black),
+                  SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      'Deliver to endurthi naveen - 17-189/1,PNO301,sirlahills,meerpet',
+                      style: TextStyle(fontSize: 12, color: Colors.black),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Icon(Icons.keyboard_arrow_down, size: 18, color: Colors.black),
+                ],
               ),
             ),
-          ),
-        ],
+            Container(
+              color: const Color(0xFFFFF3E0),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
+                  Image.asset('assets/images/logo.png', height: 30),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Container(
+                      height: 36,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: const [
+                          Icon(Icons.search, size: 20, color: Colors.grey),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Search "Midi Skirt"',
+                              style: TextStyle(color: Colors.grey),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  IconButton(
+                    icon: const Icon(Icons.notifications_none, color: Colors.black),
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.favorite_border, color: Colors.black),
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const FavoritesScreen()));
+                    },
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileScreen()));
+                    },
+                    child: const CircleAvatar(
+                      radius: 14,
+                      backgroundImage: AssetImage('assets/images/user.png'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
-
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.black,
-        selectedItemColor: Colors.yellow,
+        selectedItemColor: const Color(0xFFFFD700),
         unselectedItemColor: Colors.white,
         currentIndex: 0,
         type: BottomNavigationBarType.fixed,
@@ -100,6 +193,76 @@ class _HomeScreenState extends State<HomeScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: List.generate(_topCategories.length, (index) {
+                final isSelected = _selectedCategoryIndex == index;
+                final tab = _topCategories[index];
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedCategoryIndex = index;
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    child: Column(
+                      children: [
+                        tab.containsKey('label')
+                            ? Text(
+                          tab['label'],
+                          style: TextStyle(
+                            color: isSelected ? const Color(0xFFFF4081) : Colors.white,
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            fontSize: 16,
+                          ),
+                        )
+                            : Icon(
+                          tab['icon'],
+                          color: isSelected ? const Color(0xFFFF4081) : Colors.white,
+                        ),
+                        if (isSelected)
+                          Container(
+                            margin: const EdgeInsets.only(top: 4),
+                            height: 2,
+                            width: 24,
+                            color: const Color(0xFFFF4081),
+                          ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ),
+          const SizedBox(height: 10),
+          if (_subCategories.containsKey(selectedKey))
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: _subCategories[selectedKey]!.map((subcat) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Column(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: 28,
+                          child: Image.asset(subcat['image']!, height: 30),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          subcat['label']!,
+                          style: const TextStyle(color: Colors.white70, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          const SizedBox(height: 20),
           SizedBox(
             height: 180,
             child: PageView.builder(
@@ -118,27 +281,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
               },
-            ),
-          ),
-
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text('Categories', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-              Text('See All', style: TextStyle(color: Colors.yellow)),
-            ],
-          ),
-          const SizedBox(height: 12),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _buildCategory('Shoes', 'assets/images/shoes.png'),
-                _buildCategory('Dresses', 'assets/images/dress.png'),
-                _buildCategory('Bags', 'assets/images/bag.png'),
-                _buildCategory('Watches', 'assets/images/profile.png'),
-              ],
             ),
           ),
           const SizedBox(height: 20),
@@ -172,21 +314,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-  Widget _buildBannerImage(String imagePath) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 12),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Image.asset(
-          imagePath,
-          width: 300,
-          height: 180,
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-
 
   Widget _buildPopularItem(BuildContext context, String name, String price, String imagePath) {
     return Expanded(
@@ -213,9 +340,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Image.asset(imagePath, height: 100),
                   IconButton(
                     icon: const Icon(Icons.favorite_border, color: Colors.white),
-                    onPressed: () {
-                      // Add to favorites logic (optional)
-                    },
+                    onPressed: () {},
                   ),
                 ],
               ),
@@ -224,11 +349,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Text(price, style: const TextStyle(color: Colors.white70)),
               const SizedBox(height: 8),
               ElevatedButton(
-                onPressed: () {
-                  // Add to cart logic (optional integration)
-                },
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.yellow,
+                  backgroundColor: const Color(0xFFFFD700),
                   foregroundColor: Colors.black,
                 ),
                 child: const Text('Add to Cart'),
